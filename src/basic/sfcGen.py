@@ -16,7 +16,7 @@ TdRange = (20,40)
 SFCnum = 20 
 ##         list,              2-tuple, 2-tuple,    2-tuple 2-tuple
 def SFC_gen(SFC_id,physical_Node_list=physical_Node_list,CpuRange=CpuRange,\
-	       LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange):
+           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange):
     SFC_id = SFC_id
     src = physical_Node_list[random.randint(0,len(physical_Node_list)-1)]
     dst = physical_Node_list[random.randint(0,len(physical_Node_list)-1)]
@@ -27,11 +27,11 @@ def SFC_gen(SFC_id,physical_Node_list=physical_Node_list,CpuRange=CpuRange,\
     newSFC = SFC(SFC_id=SFC_id, src=src, dst=dst, VNF_list=VNF_list, bw=Bw, td=Td)
     return newSFC
 def gen_SFC_list(SFCnum=SFCnum):
-	SFC_list=[]
-	for i in range(SFCnum):
-		newSFC=SFC_gen(SFC_id = i)
-		newSFC.displaySFC()
-		SFC_list.append(newSFC)
+    SFC_list=[]
+    for i in range(SFCnum):
+        newSFC=SFC_gen(SFC_id = i)
+        newSFC.displaySFC()
+        SFC_list.append(newSFC)
 
 A = gen_SFC_list()
 

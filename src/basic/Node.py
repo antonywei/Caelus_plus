@@ -6,7 +6,7 @@ class Node(object):
     """docstring for Node"""
     def __init__(self,node_id,connect_nodes,cpu_cap=cpuCap):
         self.id = node_id
-        self.connectNodes = connect_nodes ## type dict {Nodes:{info},Nodes:{info}}
+        self.connectNodes = connect_nodes ## type dict {Nodes:{info},Nodes:{info}} (direct graph)
         self.cpuCap = cpuCap
         #self.embedVNF = {}
         self.embedSfc = {}  ### type dict {SFC_id:[vnf_id])
@@ -38,6 +38,8 @@ class Node(object):
             return cost
         else:
             return BIGNUM
+
+
 
 a = SFC(sfc_id=1, src=2, dst=3, vnf_list={1:(1,10),2:(2,20)}, bw=2, td=10)
 b = Node(node_id=1,connect_nodes={3:{"linkweight":2},4:{"linkweight":2}})
