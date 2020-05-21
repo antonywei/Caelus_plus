@@ -1,5 +1,5 @@
 ### physical graph
-from SFC import SFC
+from basic.SFC import SFC
 cpuCap = 100
 BIGNUM = 100000
 class Node(object):
@@ -41,10 +41,10 @@ class Node(object):
 
 
 
-a = SFC(sfc_id=1, src=2, dst=3, vnf_list={1:(1,10),2:(2,20)}, bw=2, td=10)
-b = Node(node_id=1,connect_nodes={3:{"linkweight":2},4:{"linkweight":2}})
-b.displayNode()
-b.embedVNF(sfc_instance=a,vnf_id=1)
-b.embedVNF(sfc_instance=a,vnf_id=2)
-b.displayNode()
-a.displaySFC()
+# a = SFC(sfc_id=1, src=2, dst=3, vnf_list={1:(1,10),2:(2,20)}, bw=2, td=10)
+# b = Node(node_id=1,connect_nodes={3:{"linkweight":2},4:{"linkweight":2}})
+# b.displayNode()
+# b.embedVNF(sfc_instance=a,vnf_id=1)
+# b.embedVNF(sfc_instance=a,vnf_id=2)
+# b.displayNode()
+# a.displaySFC()
