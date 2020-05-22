@@ -25,7 +25,7 @@ def gen_SFC_list(SFCnum=SFCnum):
     sfc_list=[]
     for i in range(SFCnum):
         newSFC=SFC_gen(SFC_id = i)
-        newSFC.displaySFC()
+        #newSFC.displaySFC()
         sfc_list.append(newSFC)
     return sfc_list
 

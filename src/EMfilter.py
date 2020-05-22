@@ -1,6 +1,7 @@
 ## transfer neigh map to info map at t
 from SSFChead import *
 from basic.SFC import SFC
+import matplotlib as plt
 maxBW=200
 def read_csv_file(filename=filename):
     with open(filename) as load_f:
