@@ -18,14 +18,22 @@ def cal_links_weight(sfc_ins,EM_graph):
     for nodes in EM_graph.keys():
         EM_weight_graph[nodes] = {}
         for conn_nodes in EM_graph[nodes]:
+            ## delay
             weight1 = round(EM_graph[nodes][conn_nodes][0]/sfc_ins.td*sfc_ins.VNFnum,4)
+            ## stable
             weight2 = round((T_max-EM_graph[nodes][conn_nodes][1])/T_max,4)
-            weight3 = round(sfc_ins.bw/EM_graph[nodes][conn_nodes][2],4)
+            ## bw
+            weight3 = 0
+            if EM_graph[nodes][conn_nodes][2]<sfc_ins.bw:
+                weight3 = 1e9
+            else:
+                weight3 = round(sfc_ins.bw/EM_graph[nodes][conn_nodes][2],4)
+
             EM_weight_graph[nodes][conn_nodes]=[weight1,weight2,weight3]
             EM_matrix.append(EM_weight_graph[nodes][conn_nodes])
     ### using numpy to normalize matrix 
     EM_matrix=np.array(EM_matrix)
-    factor = EM_matrix.mean(axis=0)
+    factor = np.mean(EM_matrix.clip(0,100),axis=0)
     for nodes in EM_graph.keys():
         for conn_nodes in EM_graph[nodes]:
             EM_weight_graph[nodes][conn_nodes]=round((EM_weight_graph[nodes][conn_nodes][0]/factor[0])+\
@@ -71,9 +79,15 @@ def findShortestPath(src,EM_weight_graph):
         minIndex = Index
 
     return distance,preNode
+def update_link_status(sfc_ins,embed_links,EM_graph):
+    for i in range(len(embed_links)):
+        if i == len(embed_links)-1:
+            continue
+        else:
+            EM_graph[embed_links[i]][embed_links[i+1]][2] = EM_graph[embed_links[i]][embed_links[i+1]][2]-sfc_ins.bw
+
 
 def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
-
     for sfc_ins in sfc_list:
         print("embedding sfc:",sfc_ins.id)
         for vnf in sfc_ins.vnfList:
@@ -93,13 +107,17 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
                 1/(sfc_ins.VNFnum-vnf+2)*distance_from_dst
             
             link_cost = link_cost
-            totalCost = Node_weight_matrix/Node_weight_matrix.mean() + link_cost/link_cost.mean()
+            totalCost = Node_weight_matrix/Node_weight_matrix.clip(0,100).mean() + link_cost/link_cost.clip(0,100).mean()
 
             cost = min(totalCost)
             ## find the embeding node and links
             embed_node = np.argmin(totalCost)
             embed_links = []
-            node_list[embed_node].embedVNF(sfc_ins,vnf_id=vnf)
+            
+            embed_res = node_list[embed_node].embedVNF(sfc_ins,vnf_id=vnf)
+            if embed_res==0:
+                print("embed sfc ",sfc_ins.id,"failed.")
+                break
             ## iteration to find the link list 
             ## Node to place VNF 
             node_index = embed_node 
@@ -109,8 +127,7 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
                 node_index = preNode_src[node_index]
             embed_links.insert(0,node_index)
             sfc_ins.Mapping_Link(logic_link_id=vnf-1,phy_links=embed_links)
-
-
+            update_link_status(sfc_ins,embed_links,EM_graph)
             embed_links = []
             if vnf == sfc_ins.VNFnum:
                 while node_index != sfc_dst:
@@ -118,7 +135,7 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
                     node_index = preNode_dst[node_index]
                 embed_links.append(node_index)
                 sfc_ins.Mapping_Link(logic_link_id=vnf,phy_links=embed_links)
-
+                update_link_status(sfc_ins,embed_links,EM_graph)
             ## input EM graph
             ## cal weight of links 
             ## cal weight of Nodes
@@ -127,9 +144,6 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
             ## update node info --  node.update
             ## update sfc info -- SFC.embedVNF
             ## update EM graph info
-
-##em_graph {'node':{'conn_node':[td,stable,bwRe]}}
-
 
 if __name__ == '__main__':
     MapData = read_csv_file()
@@ -148,6 +162,8 @@ if __name__ == '__main__':
     #Node_weight_matrix = cal_node_weight(sfc_list[0],1,node_list)
 
     embedingSFC(graph_raw,sfc_list,node_list)
+    for node in node_list:
+        node_list[node].displayNode()
     
             
 

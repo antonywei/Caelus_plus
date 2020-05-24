@@ -2,7 +2,7 @@
 from SSFChead import *
 from basic.SFC import SFC
 import matplotlib as plt
-maxBW=200
+from basic.globalvar import *
 def read_csv_file(filename=filename):
     with open(filename) as load_f:
         mapData = json.load(load_f)

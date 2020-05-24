@@ -16,6 +16,7 @@ class Node(object):
         cpuConsum = sfc_instance.vnfList[vnf_id][1]
         if(cpuConsum > (self.cpuCap)*(self.cpuRe)):
             print("Cpu limited, can not deploy")
+            return 0
         else:
             if (sfc_instance not in self.sfcList):
                 self.embedSfc[sfc_instance.id] = [vnf_id] ## bind vnf id 
@@ -33,9 +34,12 @@ class Node(object):
         print(NodeInfo)
     def embedCost(self,sfc_instance,vnf_id):
         cpuConsum = sfc_instance.vnfList[vnf_id][1]
-        cost = cpuConsum/(self.cpuCap*self.cpuRe)
-        if cost < 1:
-            return cost
+        if self.cpuRe > 0:
+            cost = cpuConsum/(self.cpuCap*self.cpuRe)
+            if cost < 1:
+                return cost
+            else:
+                return BIGNUM
         else:
             return BIGNUM
 

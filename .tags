@@ -1,0 +1,94 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BIGNUM	src/basic/Node.py	/^BIGNUM = 100000$/;"	v
+BwRange	src/basic/globalvar.py	/^BwRange = (10,20)$/;"	v
+CONNECT_SATE	data/process_data/cal_distance_matrix.py	/^CONNECT_SATE=2 ## except the neighbor $/;"	v
+CpuRange	src/basic/globalvar.py	/^CpuRange = (10,25)$/;"	v
+EM_filter_alg	src/EMfilter.py	/^def EM_filter_alg(): $/;"	f
+EM_find_least_cost_path	src/EMfilter.py	/^def EM_find_least_cost_path(src,dst,EM_graph):$/;"	f
+EM_graph	src/DMpre.py	/^EM_graph = create_EM_graph(Map,0)$/;"	v
+EM_pruning	src/EMfilter.py	/^def EM_pruning(EM_graph,sfc_instance):$/;"	f
+Find_Links	src/basic/SFC.py	/^    def Find_Links(self,phy_link_id):$/;"	m	class:SFC
+LengthRange	src/basic/globalvar.py	/^LengthRange = (4,7) ## VNF numbers range$/;"	v
+Map	src/DMpre.py	/^Map = read_csv_file()$/;"	v
+MapData	src/EM.py	/^    MapData = read_csv_file()$/;"	v
+Mapping_Link	src/basic/SFC.py	/^    def Mapping_Link(self,logic_link_id,phy_links):$/;"	m	class:SFC
+Mapping_VNF	src/basic/SFC.py	/^    def Mapping_VNF(self,vnf_id,nodes):$/;"	m	class:SFC
+Node	src/basic/Node.py	/^class Node(object):$/;"	c
+NodeInfo	src/basic/infoGraph.py	/^NodeInfo={$/;"	v
+ORBIT_SIZE	data/process_data/cal_distance_matrix.py	/^ORBIT_SIZE = 6$/;"	v
+PLANE_NUM	data/process_data/cal_distance_matrix.py	/^PLANE_NUM = 10$/;"	v
+SFC	src/basic/SFC.py	/^class SFC:$/;"	c
+SFC_gen	src/basic/sfcGen.py	/^           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange):$/;"	f
+SFCnum	src/basic/globalvar.py	/^SFCnum = 90$/;"	v
+T_max	src/basic/globalvar.py	/^T_max = 92$/;"	v
+TdRange	src/basic/globalvar.py	/^TdRange = (200,400)$/;"	v
+__init__	src/basic/Node.py	/^    def __init__(self,node_id,connect_nodes,cpu_cap=cpuCap):$/;"	m	class:Node
+__init__	src/basic/SFC.py	/^    def __init__(self, sfc_id, src, dst, vnf_list, bw, td):$/;"	m	class:SFC
+__init__	src/basic/infoGraph.py	/^    def __init__(self,NodeInfo=NodeInfo,edgeInfo=edgeInfo):$/;"	m	class:infoGraph
+calWeighEdge	src/basic/infoGraph.py	/^    def calWeighEdge(self):$/;"	m	class:infoGraph
+calWeightNode	src/basic/infoGraph.py	/^    def calWeightNode(self):$/;"	m	class:infoGraph
+cal_EM_graph_delay	src/EMfilter.py	/^def cal_EM_graph_delay(EM_graph):$/;"	f
+cal_links_weight	src/EM.py	/^def cal_links_weight(sfc_ins,EM_graph):$/;"	f
+cal_node_weight	src/EM.py	/^def cal_node_weight(sfc_instance,vnf_id,node_list):$/;"	f
+compare_links	src/EMfilter.py	/^def compare_links(mapData,time_step):$/;"	f
+cpuCap	src/basic/Node.py	/^cpuCap = 100$/;"	v
+create_EM_graph	src/EMfilter.py	/^def create_EM_graph(phyData,time_step):$/;"	f
+df1	data/process_data/cal_distance_matrix.py	/^                df1 = read_csv_file(orbit1,s1)$/;"	v
+df2	data/process_data/cal_distance_matrix.py	/^                df2 = read_csv_file(orbit2,s2)$/;"	v
+displayNode	src/basic/Node.py	/^    def displayNode(self):$/;"	m	class:Node
+displaySFC	src/basic/SFC.py	/^    def displaySFC(self):$/;"	m	class:SFC
+distance_DIC	data/process_data/cal_distance_matrix.py	/^distance_DIC = dict()$/;"	v
+distance_M	data/process_data/cal_distance_matrix.py	/^            distance_M = {}$/;"	v
+distance_Matrix	data/process_data/cal_distance_matrix.py	/^distance_Matrix = dict()$/;"	v
+dst	src/EM.py	/^    dst=44$/;"	v
+edgeInfo	src/basic/infoGraph.py	/^edgeInfo={$/;"	v
+embedCost	src/basic/Node.py	/^    def embedCost(self,sfc_instance,vnf_id):$/;"	m	class:Node
+embedVNF	src/basic/Node.py	/^    def embedVNF(self,sfc_instance,vnf_id):$/;"	m	class:Node
+embedingSFC	src/EM.py	/^def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):$/;"	f
+f	data/process_data/data_conversion.py	/^        f = open(file,'r')$/;"	v
+file	data/process_data/data_conversion.py	/^        file = file_head + str(orbit)+str(tempS)+".e"$/;"	v
+file_head	data/process_data/data_conversion.py	/^file_head="..\/raw_data\/Satellite1"$/;"	v
+filename	data/process_data/data_conversion.py	/^        filename= "..\/csv_data\/MyStar"+str(orbit-1)+str(s-1)+".csv"$/;"	v
+filename	src/SSFChead.py	/^filename = "..\/data\/process_data\/neigh_map_timestep.json"$/;"	v
+findShortestPath	src/EM.py	/^def findShortestPath(src,EM_weight_graph):$/;"	f
+find_shortest_path	src/basic/infoGraph.py	/^    def find_shortest_path(self,start,end,path=[]):$/;"	m	class:infoGraph
+flag	data/process_data/data_conversion.py	/^                    flag=False$/;"	v
+flag	data/process_data/data_conversion.py	/^                    flag=True$/;"	v
+flag	data/process_data/data_conversion.py	/^        flag = False$/;"	v
+frame	data/process_data/cal_distance_matrix.py	/^frame = pd.DataFrame(distance_DIC)$/;"	v
+gen_SFC_list	src/basic/sfcGen.py	/^def gen_SFC_list(SFCnum=SFCnum):$/;"	f
+graph_raw	src/EM.py	/^    graph_raw = create_EM_graph(phyData=MapData,time_step=0) ## EM graph : $/;"	v
+index	data/process_data/cal_distance_matrix.py	/^                index = min(distance_M,key=distance_M.get)$/;"	v
+infoGraph	src/basic/infoGraph.py	/^class infoGraph$/;"	c
+init_nodes_list	src/EM.py	/^def init_nodes_list(EM_graph):$/;"	f
+line	data/process_data/data_conversion.py	/^            line = f.readline()$/;"	v
+line	data/process_data/data_conversion.py	/^            line = line.split()$/;"	v
+maxBW	src/basic/globalvar.py	/^maxBW = 100$/;"	v
+migrate_EM_graph	src/DMpre.py	/^def migrate_EM_graph(phyData,EM_graph_pre,time_step):$/;"	f
+minDIC	data/process_data/cal_distance_matrix.py	/^            minDIC = {}$/;"	v
+minK	data/process_data/cal_distance_matrix.py	/^            minK = [-sys.maxsize]*CONNECT_SATE$/;"	v
+name	data/process_data/data_conversion.py	/^        name = ['time','x','y','z']$/;"	v
+neigh_map	data/process_data/cal_distance_matrix.py	/^    neigh_map = {}$/;"	v
+node_dis	data/process_data/cal_distance_matrix.py	/^                node_dis = np.sqrt(np.sum((df1-df2)**2,axis=1,keepdims=True))$/;"	v
+node_list	src/EM.py	/^    node_list = init_nodes_list(graph_raw)$/;"	v
+physical_Node_list	src/basic/globalvar.py	/^physical_Node_list = [i for i in range(60)]$/;"	v
+read_csv_file	data/process_data/cal_distance_matrix.py	/^def read_csv_file(orbit,s):$/;"	f
+read_csv_file	src/EMfilter.py	/^def read_csv_file(filename=filename):$/;"	f
+res	data/process_data/data_conversion.py	/^        res=np.array(result)$/;"	v
+result	data/process_data/data_conversion.py	/^        result = []$/;"	v
+sameOrbitNode1	data/process_data/cal_distance_matrix.py	/^            sameOrbitNode1 = (s1 + 9)%10$/;"	v
+sameOrbitNode2	data/process_data/cal_distance_matrix.py	/^            sameOrbitNode2 = (s1 + 1)%10$/;"	v
+sfcCount	src/basic/SFC.py	/^    sfcCount = 0$/;"	v	class:SFC
+sfc_list	src/EM.py	/^    sfc_list = gen_SFC_list()$/;"	v
+src	src/EM.py	/^    src=00$/;"	v
+tempS	data/process_data/data_conversion.py	/^            tempS = str(0)+str(s)$/;"	v
+tempS	data/process_data/data_conversion.py	/^            tempS = str(10)$/;"	v
+time_len	data/process_data/cal_distance_matrix.py	/^time_len = len(distance_Matrix['00']['00'])$/;"	v
+update_link_status	src/EM.py	/^def update_link_status(sfc_ins,embed_links,EM_graph):$/;"	f
+weight_graph	src/EM.py	/^    weight_graph = embedingSFC(graph_raw,sfc_list,node_list)$/;"	v
+wt	data/process_data/data_conversion.py	/^        wt = pd.DataFrame(columns=name,data=res[:,0:4])$/;"	v

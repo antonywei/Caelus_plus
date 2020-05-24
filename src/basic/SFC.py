@@ -18,6 +18,7 @@ class SFC:
         self.linkMap[0].append(src)
         self.linkMap[self.VNFnum].append(dst)
 
+
     def displaySFC(self):
         print("******* the info of SFC request "+str(self.id)+" is ************")
         Dict = [{"id":self.id},{"src":self.src},{"dst":self.dst},\

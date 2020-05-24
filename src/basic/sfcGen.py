@@ -11,7 +11,7 @@ import random
 from basic.globalvar import *
 ##         list,              2-tuple, 2-tuple,    2-tuple 2-tuple
 def SFC_gen(SFC_id,physical_Node_list=physical_Node_list,CpuRange=CpuRange,\
-           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange):
+           Length=LengthRange,BwRange=BwRange,TdRange=TdRange):
     SFC_id = SFC_id
     src = physical_Node_list[random.randint(0,len(physical_Node_list)-1)]
     dst = physical_Node_list[random.randint(0,len(physical_Node_list)-1)]
@@ -25,6 +25,8 @@ def gen_SFC_list(SFCnum=SFCnum):
     sfc_list=[]
     for i in range(SFCnum):
         newSFC=SFC_gen(SFC_id = i)
+
+        #### need to modify and make sfc 
         #newSFC.displaySFC()
         sfc_list.append(newSFC)
     return sfc_list
