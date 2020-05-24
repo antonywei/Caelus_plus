@@ -15,7 +15,6 @@ class SFC:
         SFC.sfcCount += 1
         self.nodesMap = {i:None for i in range(1,(self.VNFnum)+1)}
         self.linkMap = {i:[] for i in range((self.VNFnum)+1)}
-
         self.linkMap[0].append(src)
         self.linkMap[self.VNFnum].append(dst)
 

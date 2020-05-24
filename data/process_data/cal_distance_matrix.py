@@ -5,7 +5,7 @@ import heapq
 import sys 
 ORBIT_SIZE = 6
 PLANE_NUM = 10
-CONNECT_SATE=4 ## except the neighbor 
+CONNECT_SATE=2 ## except the neighbor 
 def read_csv_file(orbit,s):
     filename= "../csv_data/MyStar"+str(orbit)+str(s)+".csv"
     df = pd.read_csv(filename,skiprows=0)
@@ -52,6 +52,12 @@ for timestep in range(time_len):
                 minDIC[index] = distance_M.pop(index)
             neigh_map[str(orbit1)+str(s1)] = minDIC
     distance_DIC[timestep] = neigh_map
+
+for timestep in distance_DIC:
+    for s1 in distance_DIC[timestep]:
+        for s2 in distance_DIC[timestep][s1]:
+            distance_DIC[timestep][s2][s1] = distance_DIC[timestep][s1][s2]
+
 
 frame = pd.DataFrame(distance_DIC)
 frame.to_json('neigh_map_timestep.json')

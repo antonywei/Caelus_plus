@@ -12,20 +12,22 @@ def compare_links(mapData,time_step):
 
 def create_EM_graph(phyData,time_step):
     ## transfer phy graphs to EM graphs
-    EM_graph = phyData[str(time_step)]
+    EM_graph = {}
     T = len(phyData)
-    for nodes in EM_graph.keys():
-        for conn_nodes in EM_graph[nodes]:
-            EM_graph[nodes][conn_nodes].append(0)
-            EM_graph[nodes][conn_nodes].append(maxBW)
+    for nodes in phyData[str(time_step)].keys():
+        EM_graph[int(nodes)]={}
+        for conn_nodes in phyData[str(time_step)][nodes].keys():
+            EM_graph[int(nodes)][int(conn_nodes)]=[phyData[str(time_step)][nodes][conn_nodes][0],0,maxBW]
             for i in range(T):
                 timeIndex = str((i + time_step)%T)
                 if conn_nodes in phyData[timeIndex][nodes].keys():
-                    EM_graph[nodes][conn_nodes][1] +=1
+                    EM_graph[int(nodes)][int(conn_nodes)][1] +=1
                 else:
                     continue
     EM_graph = cal_EM_graph_delay(EM_graph)
+    print(EM_graph[0])
     return EM_graph
+
 
 
 def cal_EM_graph_delay(EM_graph):

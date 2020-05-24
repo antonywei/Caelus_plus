@@ -22,7 +22,7 @@ class Node(object):
                 self.sfcList.add(sfc_instance) ## add sfc instance 
             else:
                 self.embedSfc[sfc_instance.id].append(vnf_id)
-            self.cpuRe = self.cpuRe - cpuConsum/self.cpuCap
+            self.cpuRe = round(self.cpuRe - cpuConsum/self.cpuCap,3)
             sfc_instance.Mapping_VNF(vnf_id,self.id) ### mapping nodes
             print("embeding VNF: "+str(vnf_id)+" in Node: "+str(self.id)+" success")
     def displayNode(self):
