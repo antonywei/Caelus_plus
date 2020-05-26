@@ -37,22 +37,16 @@ tempS	data/process_data/data_conversion.py	/^            tempS = str(0)+str(s)$/
 tempS	data/process_data/data_conversion.py	/^            tempS = str(10)$/;"	v
 wt	data/process_data/data_conversion.py	/^        wt = pd.DataFrame(columns=name,data=res[:,0:4])$/;"	v
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-EM_graph	src/DMpre.py	/^EM_graph = create_EM_graph(Map,0)$/;"	v
-Map	src/DMpre.py	/^Map = read_csv_file()$/;"	v
+check_vnf	src/DMpre.py	/^def check_vnf(sfc_list_pre,disconn_Links):$/;"	f
 migrate_EM_graph	src/DMpre.py	/^def migrate_EM_graph(phyData,EM_graph_pre,time_step):$/;"	f
-MapData	src/EM.py	/^    MapData = read_csv_file()$/;"	v
-cal_links_weight	src/EM.py	/^def cal_links_weight(sfc_ins,EM_graph):$/;"	f
-cal_node_weight	src/EM.py	/^def cal_node_weight(sfc_instance,vnf_id,node_list):$/;"	f
-dst	src/EM.py	/^    dst=44$/;"	v
+EM_embeding	src/EM.py	/^def EM_embeding(phyData):$/;"	f
+cal_links_weight	src/EM.py	/^def cal_links_weight(sfc_ins,EM_graph,Refactory=Refactory,Migfactory=Migfactory):$/;"	f
+cal_node_weight	src/EM.py	/^def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory=Refactory):$/;"	f
+draw_CDF	src/EM.py	/^def draw_CDF(data,graph_name):$/;"	f
 embedingSFC	src/EM.py	/^def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):$/;"	f
 findShortestPath	src/EM.py	/^def findShortestPath(src,EM_weight_graph):$/;"	f
-graph_raw	src/EM.py	/^    graph_raw = create_EM_graph(phyData=MapData,time_step=0) ## EM graph : $/;"	v
 init_nodes_list	src/EM.py	/^def init_nodes_list(EM_graph):$/;"	f
-node_list	src/EM.py	/^    node_list = init_nodes_list(graph_raw)$/;"	v
-sfc_list	src/EM.py	/^    sfc_list = gen_SFC_list()$/;"	v
-src	src/EM.py	/^    src=00$/;"	v
 update_link_status	src/EM.py	/^def update_link_status(sfc_ins,embed_links,EM_graph):$/;"	f
-weight_graph	src/EM.py	/^    weight_graph = embedingSFC(graph_raw,sfc_list,node_list)$/;"	v
 EM_filter_alg	src/EMfilter.py	/^def EM_filter_alg(): $/;"	f
 EM_find_least_cost_path	src/EMfilter.py	/^def EM_find_least_cost_path(src,dst,EM_graph):$/;"	f
 EM_pruning	src/EMfilter.py	/^def EM_pruning(EM_graph,sfc_instance):$/;"	f
@@ -61,10 +55,8 @@ compare_links	src/EMfilter.py	/^def compare_links(mapData,time_step):$/;"	f
 create_EM_graph	src/EMfilter.py	/^def create_EM_graph(phyData,time_step):$/;"	f
 read_csv_file	src/EMfilter.py	/^def read_csv_file(filename=filename):$/;"	f
 filename	src/SSFChead.py	/^filename = "..\/data\/process_data\/neigh_map_timestep.json"$/;"	v
-BIGNUM	src/basic/Node.py	/^BIGNUM = 100000$/;"	v
 Node	src/basic/Node.py	/^class Node(object):$/;"	c
 __init__	src/basic/Node.py	/^    def __init__(self,node_id,connect_nodes,cpu_cap=cpuCap):$/;"	m	class:Node
-cpuCap	src/basic/Node.py	/^cpuCap = 100$/;"	v
 displayNode	src/basic/Node.py	/^    def displayNode(self):$/;"	m	class:Node
 embedCost	src/basic/Node.py	/^    def embedCost(self,sfc_instance,vnf_id):$/;"	m	class:Node
 embedVNF	src/basic/Node.py	/^    def embedVNF(self,sfc_instance,vnf_id):$/;"	m	class:Node
@@ -75,12 +67,16 @@ SFC	src/basic/SFC.py	/^class SFC:$/;"	c
 __init__	src/basic/SFC.py	/^    def __init__(self, sfc_id, src, dst, vnf_list, bw, td):$/;"	m	class:SFC
 displaySFC	src/basic/SFC.py	/^    def displaySFC(self):$/;"	m	class:SFC
 sfcCount	src/basic/SFC.py	/^    sfcCount = 0$/;"	v	class:SFC
-BwRange	src/basic/globalvar.py	/^BwRange = (10,20)$/;"	v
-CpuRange	src/basic/globalvar.py	/^CpuRange = (10,25)$/;"	v
-LengthRange	src/basic/globalvar.py	/^LengthRange = (4,7) ## VNF numbers range$/;"	v
-SFCnum	src/basic/globalvar.py	/^SFCnum = 90$/;"	v
+BIGNUM	src/basic/globalvar.py	/^BIGNUM = 100000$/;"	v
+BwRange	src/basic/globalvar.py	/^BwRange = (10,15)$/;"	v
+CpuRange	src/basic/globalvar.py	/^CpuRange = (1,10)$/;"	v
+LengthRange	src/basic/globalvar.py	/^LengthRange = (4,10) ## VNF numbers range$/;"	v
+Migfactory	src/basic/globalvar.py	/^Migfactory = 1$/;"	v
+Refactory	src/basic/globalvar.py	/^Refactory = 1$/;"	v
+SFCnum	src/basic/globalvar.py	/^SFCnum = 100$/;"	v
 T_max	src/basic/globalvar.py	/^T_max = 92$/;"	v
 TdRange	src/basic/globalvar.py	/^TdRange = (200,400)$/;"	v
+cpuCap	src/basic/globalvar.py	/^cpuCap = 100$/;"	v
 maxBW	src/basic/globalvar.py	/^maxBW = 100$/;"	v
 physical_Node_list	src/basic/globalvar.py	/^physical_Node_list = [i for i in range(60)]$/;"	v
 NodeInfo	src/basic/infoGraph.py	/^NodeInfo={$/;"	v
@@ -90,5 +86,5 @@ calWeightNode	src/basic/infoGraph.py	/^    def calWeightNode(self):$/;"	m	class:
 edgeInfo	src/basic/infoGraph.py	/^edgeInfo={$/;"	v
 find_shortest_path	src/basic/infoGraph.py	/^    def find_shortest_path(self,start,end,path=[]):$/;"	m	class:infoGraph
 infoGraph	src/basic/infoGraph.py	/^class infoGraph$/;"	c
-SFC_gen	src/basic/sfcGen.py	/^           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange):$/;"	f
-gen_SFC_list	src/basic/sfcGen.py	/^def gen_SFC_list(SFCnum=SFCnum):$/;"	f
+SFC_gen	src/basic/sfcGen.py	/^           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange,Length=0):$/;"	f
+gen_SFC_list	src/basic/sfcGen.py	/^def gen_SFC_list(SFCnum=SFCnum,LengthRange=LengthRange):$/;"	f

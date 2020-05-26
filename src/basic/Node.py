@@ -1,7 +1,6 @@
 ### physical graph
 from basic.SFC import SFC
-cpuCap = 100
-BIGNUM = 100000
+from basic.globalvar import *
 class Node(object):
     """docstring for Node"""
     def __init__(self,node_id,connect_nodes,cpu_cap=cpuCap):
@@ -25,7 +24,7 @@ class Node(object):
                 self.embedSfc[sfc_instance.id].append(vnf_id)
             self.cpuRe = round(self.cpuRe - cpuConsum/self.cpuCap,3)
             sfc_instance.Mapping_VNF(vnf_id,self.id) ### mapping nodes
-            print("embeding VNF: "+str(vnf_id)+" in Node: "+str(self.id)+" success")
+            #print("embeding VNF: "+str(vnf_id)+" in Node: "+str(self.id)+" success")
     def displayNode(self):
         NodeInfo = {"ID":self.id,"connectNodes":self.connectNodes,\
                     "cpuCap":self.cpuCap,"embedSfc":self.embedSfc, \
@@ -42,6 +41,12 @@ class Node(object):
                 return BIGNUM
         else:
             return BIGNUM
+    def release_embedding_result(self):
+        self.cpuCap = cpuCap
+        #self.embedVNF = {}
+        self.embedSfc = {}  ### type dict {SFC_id:[vnf_id])
+        self.sfcList = set()
+        self.cpuRe = 1
 
 
 

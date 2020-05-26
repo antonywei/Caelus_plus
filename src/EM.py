@@ -3,7 +3,7 @@ from EMfilter import *
 from basic.sfcGen import * 
 import numpy as np
 from basic.Node import Node
-
+import matplotlib.pyplot as plt 
 def init_nodes_list(EM_graph):
     Node_list = {}
     for i in EM_graph.keys():
@@ -11,7 +11,7 @@ def init_nodes_list(EM_graph):
         Node_list[i] = node_ins
     return Node_list
 
-def cal_links_weight(sfc_ins,EM_graph):
+def cal_links_weight(sfc_ins,EM_graph,Refactory=Refactory,Migfactory=Migfactory):
     EM_weight_graph = {}
     EM_matrix =[]
     ### calculate the weight 
@@ -36,17 +36,18 @@ def cal_links_weight(sfc_ins,EM_graph):
     factor = np.mean(EM_matrix.clip(0,100),axis=0)
     for nodes in EM_graph.keys():
         for conn_nodes in EM_graph[nodes]:
-            EM_weight_graph[nodes][conn_nodes]=round((EM_weight_graph[nodes][conn_nodes][0]/factor[0])+\
-                (EM_weight_graph[nodes][conn_nodes][1]/factor[1])+\
-                (EM_weight_graph[nodes][conn_nodes][2]/factor[2]),4)
+            ##[0:delay,1:stable,2:bw]
+            EM_weight_graph[nodes][conn_nodes]=round(Tdfactory*(EM_weight_graph[nodes][conn_nodes][0]/factor[0])+\
+                Migfactory*(EM_weight_graph[nodes][conn_nodes][1]/factor[1])+\
+                Refactory*(EM_weight_graph[nodes][conn_nodes][2]/factor[2]),4)
     for nodes in EM_weight_graph.keys():
         EM_weight_graph[nodes][nodes] = 0
-    return EM_weight_graph,EM_matrix
+    return EM_weight_graph
 
-def cal_node_weight(sfc_instance,vnf_id,node_list):
+def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory=Refactory):
     Node_weight_matrix = []
     for node_ins in node_list:
-        Node_weight_matrix.append(node_list[node_ins].embedCost(sfc_instance,vnf_id))
+        Node_weight_matrix.append(Refactory*node_list[node_ins].embedCost(sfc_instance,vnf_id))
     return Node_weight_matrix
 
 def findShortestPath(src,EM_weight_graph):
@@ -81,22 +82,22 @@ def findShortestPath(src,EM_weight_graph):
     return distance,preNode
 def update_link_status(sfc_ins,embed_links,EM_graph):
     for i in range(len(embed_links)):
-        if i == len(embed_links)-1:
-            continue
-        else:
-            EM_graph[embed_links[i]][embed_links[i+1]][2] = EM_graph[embed_links[i]][embed_links[i+1]][2]-sfc_ins.bw
+        if embed_links[i][0] != embed_links[i][1]:
+            EM_graph[embed_links[i][0]][embed_links[i][1]][2] = EM_graph[embed_links[i][0]][embed_links[i][1]][2]-sfc_ins.bw
 
 
 def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
     for sfc_ins in sfc_list:
-        print("embedding sfc:",sfc_ins.id)
+        #print("embedding sfc:",sfc_ins.id)
         for vnf in sfc_ins.vnfList:
             sfc_dst=sfc_ins.dst
-            sfc_src = sfc_ins.src
-            if vnf > 1:
+            
+            if vnf == 1:
+                sfc_src = sfc_ins.src
+            else:
                 sfc_src=sfc_ins.nodesMap[vnf-1]
             ## calculate the weight graph
-            weight_graph,EM_matrix = cal_links_weight(sfc_ins,EM_graph)
+            weight_graph = cal_links_weight(sfc_ins,EM_graph)
             Node_weight_matrix = cal_node_weight(sfc_instance=sfc_ins,vnf_id=vnf,node_list=node_list)
             Node_weight_matrix=np.array(Node_weight_matrix)
             ### calculate the embeding cost matrix
@@ -107,12 +108,12 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
                 1/(sfc_ins.VNFnum-vnf+2)*distance_from_dst
             
             link_cost = link_cost
-            totalCost = Node_weight_matrix/Node_weight_matrix.clip(0,100).mean() + link_cost/link_cost.clip(0,100).mean()
+            totalCost = Refactory*Node_weight_matrix/Node_weight_matrix.clip(0,100).mean() + Migfactory*link_cost/link_cost.clip(0,100).mean()
 
             cost = min(totalCost)
             ## find the embeding node and links
             embed_node = np.argmin(totalCost)
-            embed_links = []
+            
             
             embed_res = node_list[embed_node].embedVNF(sfc_ins,vnf_id=vnf)
             if embed_res==0:
@@ -120,22 +121,32 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
                 break
             ## iteration to find the link list 
             ## Node to place VNF 
-            node_index = embed_node 
-            
-            while node_index != sfc_src:
-                embed_links.insert(0,node_index)
-                node_index = preNode_src[node_index]
-            embed_links.insert(0,node_index)
-            sfc_ins.Mapping_Link(logic_link_id=vnf-1,phy_links=embed_links)
-            update_link_status(sfc_ins,embed_links,EM_graph)
+            node_index = embed_node
+
             embed_links = []
-            if vnf == sfc_ins.VNFnum:
-                while node_index != sfc_dst:
-                    embed_links.append(node_index)
-                    node_index = preNode_dst[node_index]
-                embed_links.append(node_index)
-                sfc_ins.Mapping_Link(logic_link_id=vnf,phy_links=embed_links)
+            if node_index == sfc_src:
+                embed_links.insert(0,(preNode_src[node_index],node_index))
+                sfc_ins.Mapping_Link(logic_link_id=vnf-1,phy_links=embed_links)
+            else:
+                while node_index != sfc_src:
+                    embed_links.insert(0,(preNode_src[node_index],node_index))
+                    node_index = preNode_src[node_index]
+                
+                sfc_ins.Mapping_Link(logic_link_id=vnf-1,phy_links=embed_links)
                 update_link_status(sfc_ins,embed_links,EM_graph)
+            
+            if vnf == sfc_ins.VNFnum:
+                node_index = embed_node
+                embed_dst_links = []
+                if sfc_dst == node_index:
+                    embed_dst_links=[(node_index,sfc_dst)]
+                    sfc_ins.Mapping_Link(logic_link_id=vnf,phy_links=embed_dst_links)
+                else:
+                    while node_index != sfc_dst:
+                        embed_dst_links.append((node_index,preNode_dst[node_index]))
+                        node_index = preNode_dst[node_index]
+                    sfc_ins.Mapping_Link(logic_link_id=vnf,phy_links=embed_dst_links)
+                    update_link_status(sfc_ins,embed_dst_links,EM_graph)
             ## input EM graph
             ## cal weight of links 
             ## cal weight of Nodes
@@ -143,27 +154,93 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
             ## embed vnf 
             ## update node info --  node.update
             ## update sfc info -- SFC.embedVNF
-            ## update EM graph info
+            ## update EM graph inf
 
-if __name__ == '__main__':
-    MapData = read_csv_file()
+def draw_CDF(data,graph_name):
+    n_bins = 50
+    x = data
+    #x = x/30
+    x_max = np.max(x)
+    x_min = np.min(x)
+    print(x_max)
+
+    width = 5
+    high = width*0.618
+    fig_size = [width, high]
+
+    fig, ax = plt.subplots(figsize=fig_size)
+
+    ax.set_xlim(0, x_max)
+    ax.set_ylim(0, 1)
+
+    # plot the cumulative histogram
+    n, bins, patches = ax.hist(x, n_bins, density=1, histtype='step',
+                               cumulative=True, color='black', linewidth=1.4)
+
+
+    # tidy up the figure
+    ax.grid(True)
+    ticks_font_x = {'family' : 'Arial',  
+                  'color'  : 'black',  
+                  'weight' : 'medium',  
+                  'size'   : 15.5} 
+    ax.set_xticks([0.0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60 ,0.70, 0.80, 0.90, 1]) 
+    ax.set_xticklabels(("0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7","0.8","0.9","1"), fontdict=ticks_font_x)
+
+    ticks_font_y = {'family' : 'Arial',  
+                  'color'  : 'black',  
+                  'weight' : 'medium',  
+                  'size'   : 15.5}  
+    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+    ax.set_yticklabels(("0", "0.2", "0.4", "0.6", "0.8", "1.0"), fontdict=ticks_font_y)
+
+    label_font_x = {'family' : 'Arial',  
+                  'color'  : 'black',  
+                  'weight' : 'medium',  
+                  'size'   : 16.5}
+    label_font_y = {'family' : 'Arial',  
+                  'color'  : 'black',  
+                  'weight' : 'medium',  
+                  'size'   : 16.5} 
+    
+    plt.savefig(graph_name)
+    plt.show()
+
+def EM_embeding(phyData,sfc_list):
     ## get EM graph
-    graph_raw = create_EM_graph(phyData=MapData,time_step=0) ## EM graph : 
+    graph_raw = create_EM_graph(phyData=phyData,time_step=0) ## EM graph : 
     ### init node list
     node_list = init_nodes_list(graph_raw)
     ### init SFC list
-    sfc_list = gen_SFC_list()
+    sfc_list = sfc_list
         #embedingSFC(sfc_list=sfc_list,EM_graph=EM_graph)
-    src=00
-    dst=44
 
     ## test command for cal weight of links and nodes 
     #weight_graph,EM_matrix = cal_links_weight(sfc_list[0],graph_raw)
     #Node_weight_matrix = cal_node_weight(sfc_list[0],1,node_list)
-
+    nodeCPURe = []
     embedingSFC(graph_raw,sfc_list,node_list)
     for node in node_list:
-        node_list[node].displayNode()
+        nodeCPURe.append(node_list[node].cpuRe)
+    nodeCPURe = np.array(nodeCPURe)
+    CPUconsum=1-nodeCPURe
+    draw_CDF(CPUconsum,graph_name="BLCPU.jpg")
+
+    linkBwRe = []
+    for node1 in graph_raw:
+        for node2 in graph_raw[node1]:
+            linkBwRe.append(graph_raw[node1][node2][2])
+    linkBwRe = np.array(linkBwRe)
+    linkConsum=1-linkBwRe/100
+    draw_CDF(data=linkConsum,graph_name="BLBW.jpg")
+    return graph_raw,node_list,sfc_list
+
+# if __name__ == '__main__':
+#     EM_embeding()
+    
+
+
+
     
             
 

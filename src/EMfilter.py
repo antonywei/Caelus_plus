@@ -10,31 +10,44 @@ def read_csv_file(filename=filename):
 def compare_links(mapData,time_step):
     pass
 
-def create_EM_graph(phyData,time_step):
+def create_EM_graph(phyData,time_step,EM_graph_pre={}):
     ## transfer phy graphs to EM graphs
     EM_graph = {}
     T = len(phyData)
-    for nodes in phyData[str(time_step)].keys():
-        EM_graph[int(nodes)]={}
-        for conn_nodes in phyData[str(time_step)][nodes].keys():
-            EM_graph[int(nodes)][int(conn_nodes)]=[phyData[str(time_step)][nodes][conn_nodes][0],0,maxBW]
-            for i in range(T):
-                timeIndex = str((i + time_step)%T)
-                if conn_nodes in phyData[timeIndex][nodes].keys():
-                    EM_graph[int(nodes)][int(conn_nodes)][1] +=1
+    if EM_graph_pre == {}:
+        for nodes in phyData[str(time_step)].keys():
+            EM_graph[int(nodes)]={}
+            for conn_nodes in phyData[str(time_step)][nodes].keys():
+                EM_graph[int(nodes)][int(conn_nodes)]=[round(phyData[str(time_step)][nodes][conn_nodes][0]/(3*10**5)),0,maxBW]
+                for i in range(T):
+                    timeIndex = str((i + time_step)%T)
+                    if conn_nodes in phyData[timeIndex][nodes].keys():
+                        EM_graph[int(nodes)][int(conn_nodes)][1] +=1
+                    else:
+                        continue
+    else:
+        for nodes in phyData[str(time_step)].keys():
+            EM_graph[int(nodes)]={}
+            for conn_nodes in phyData[str(time_step)][nodes].keys():
+                if int(conn_nodes) not in EM_graph_pre[int(nodes)]:
+                    EM_graph[int(nodes)][int(conn_nodes)]=[round(phyData[str(time_step)][nodes][conn_nodes][0]/(3*10**5)),0,maxBW]
+                    for i in range(T):
+                        timeIndex = str((i + time_step)%T)
+                        if conn_nodes in phyData[timeIndex][nodes].keys():
+                            EM_graph[int(nodes)][int(conn_nodes)][1] +=1
+                        else:
+                            continue
                 else:
-                    continue
-    EM_graph = cal_EM_graph_delay(EM_graph)
-    print(EM_graph[0])
+                    EM_graph[int(nodes)][int(conn_nodes)]=EM_graph_pre[int(nodes)][int(conn_nodes)]
     return EM_graph
 
 
 
-def cal_EM_graph_delay(EM_graph):
-    for i in EM_graph:
-        for j in EM_graph[i]:
-            EM_graph[i][j][0] = round(EM_graph[i][j][0]/(3*10**5))
-    return EM_graph
+# def cal_EM_graph_delay(EM_graph):
+#     for i in EM_graph:
+#         for j in EM_graph[i]:
+#             EM_graph[i][j][0] = round(EM_graph[i][j][0]/(3*10**5))
+#     return EM_graph
 
 def EM_pruning(EM_graph,sfc_instance):
     pass

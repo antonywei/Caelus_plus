@@ -17,6 +17,7 @@ class SFC:
         self.linkMap = {i:[] for i in range((self.VNFnum)+1)}
         self.linkMap[0].append(src)
         self.linkMap[self.VNFnum].append(dst)
+        #self.embed_delay
 
 
     def displaySFC(self):
@@ -39,6 +40,10 @@ class SFC:
             if phy_link_id in linkMap[key]:
                 result.append(key)
         return result
+
+    def release_embedding_result(self):
+        self.nodesMap = {i:None for i in range(1,(self.VNFnum)+1)}
+        self.linkMap = {i:[] for i in range((self.VNFnum)+1)}
 
 
 
