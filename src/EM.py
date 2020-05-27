@@ -4,6 +4,7 @@ from basic.sfcGen import *
 import numpy as np
 from basic.Node import Node
 import matplotlib.pyplot as plt 
+import copy
 def init_nodes_list(EM_graph):
     Node_list = {}
     for i in EM_graph.keys():
@@ -11,7 +12,7 @@ def init_nodes_list(EM_graph):
         Node_list[i] = node_ins
     return Node_list
 
-def cal_links_weight(sfc_ins,EM_graph,Refactory=Refactory,Migfactory=Migfactory):
+def cal_links_weight(sfc_ins,EM_graph,Tdfactory,Refactory,Migfactory):
     EM_weight_graph = {}
     EM_matrix =[]
     ### calculate the weight 
@@ -44,7 +45,7 @@ def cal_links_weight(sfc_ins,EM_graph,Refactory=Refactory,Migfactory=Migfactory)
         EM_weight_graph[nodes][nodes] = 0
     return EM_weight_graph
 
-def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory=Refactory):
+def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory):
     Node_weight_matrix = []
     for node_ins in node_list:
         Node_weight_matrix.append(Refactory*node_list[node_ins].embedCost(sfc_instance,vnf_id))
@@ -86,7 +87,7 @@ def update_link_status(sfc_ins,embed_links,EM_graph):
             EM_graph[embed_links[i][0]][embed_links[i][1]][2] = EM_graph[embed_links[i][0]][embed_links[i][1]][2]-sfc_ins.bw
 
 
-def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
+def embedingSFC(EM_graph,sfc_list,node_list,Tdfactory,Refactory,Migfactory):
     for sfc_ins in sfc_list:
         #print("embedding sfc:",sfc_ins.id)
         for vnf in sfc_ins.vnfList:
@@ -97,8 +98,8 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
             else:
                 sfc_src=sfc_ins.nodesMap[vnf-1]
             ## calculate the weight graph
-            weight_graph = cal_links_weight(sfc_ins,EM_graph)
-            Node_weight_matrix = cal_node_weight(sfc_instance=sfc_ins,vnf_id=vnf,node_list=node_list)
+            weight_graph = cal_links_weight(sfc_ins,EM_graph,Tdfactory=Tdfactory,Refactory=Refactory,Migfactory=Migfactory)
+            Node_weight_matrix = cal_node_weight(sfc_instance=sfc_ins,vnf_id=vnf,node_list=node_list,Refactory=Refactory)
             Node_weight_matrix=np.array(Node_weight_matrix)
             ### calculate the embeding cost matrix
             distance_from_src,preNode_src = findShortestPath(sfc_src,weight_graph)
@@ -156,57 +157,9 @@ def embedingSFC(EM_graph,sfc_list,node_list,lambd=0):
             ## update sfc info -- SFC.embedVNF
             ## update EM graph inf
 
-def draw_CDF(data,graph_name):
-    n_bins = 50
-    x = data
-    #x = x/30
-    x_max = np.max(x)
-    x_min = np.min(x)
-    print(x_max)
-
-    width = 5
-    high = width*0.618
-    fig_size = [width, high]
-
-    fig, ax = plt.subplots(figsize=fig_size)
-
-    ax.set_xlim(0, x_max)
-    ax.set_ylim(0, 1)
-
-    # plot the cumulative histogram
-    n, bins, patches = ax.hist(x, n_bins, density=1, histtype='step',
-                               cumulative=True, color='black', linewidth=1.4)
 
 
-    # tidy up the figure
-    ax.grid(True)
-    ticks_font_x = {'family' : 'Arial',  
-                  'color'  : 'black',  
-                  'weight' : 'medium',  
-                  'size'   : 15.5} 
-    ax.set_xticks([0.0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60 ,0.70, 0.80, 0.90, 1]) 
-    ax.set_xticklabels(("0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7","0.8","0.9","1"), fontdict=ticks_font_x)
-
-    ticks_font_y = {'family' : 'Arial',  
-                  'color'  : 'black',  
-                  'weight' : 'medium',  
-                  'size'   : 15.5}  
-    ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
-    ax.set_yticklabels(("0", "0.2", "0.4", "0.6", "0.8", "1.0"), fontdict=ticks_font_y)
-
-    label_font_x = {'family' : 'Arial',  
-                  'color'  : 'black',  
-                  'weight' : 'medium',  
-                  'size'   : 16.5}
-    label_font_y = {'family' : 'Arial',  
-                  'color'  : 'black',  
-                  'weight' : 'medium',  
-                  'size'   : 16.5} 
-    
-    plt.savefig(graph_name)
-    plt.show()
-
-def EM_embeding(phyData,sfc_list):
+def EM_embeding(phyData,sfc_list,Tdfactory,Refactory,Migfactory):
     ## get EM graph
     graph_raw = create_EM_graph(phyData=phyData,time_step=0) ## EM graph : 
     ### init node list
@@ -218,13 +171,14 @@ def EM_embeding(phyData,sfc_list):
     ## test command for cal weight of links and nodes 
     #weight_graph,EM_matrix = cal_links_weight(sfc_list[0],graph_raw)
     #Node_weight_matrix = cal_node_weight(sfc_list[0],1,node_list)
+    
+    embedingSFC(graph_raw,sfc_list,node_list,Tdfactory,Refactory,Migfactory)
     nodeCPURe = []
-    embedingSFC(graph_raw,sfc_list,node_list)
     for node in node_list:
         nodeCPURe.append(node_list[node].cpuRe)
     nodeCPURe = np.array(nodeCPURe)
     CPUconsum=1-nodeCPURe
-    draw_CDF(CPUconsum,graph_name="BLCPU.jpg")
+    #draw_CDF(CPUconsum,graph_name="BLCPU.jpg")
 
     linkBwRe = []
     for node1 in graph_raw:
@@ -232,7 +186,7 @@ def EM_embeding(phyData,sfc_list):
             linkBwRe.append(graph_raw[node1][node2][2])
     linkBwRe = np.array(linkBwRe)
     linkConsum=1-linkBwRe/100
-    draw_CDF(data=linkConsum,graph_name="BLBW.jpg")
+    #draw_CDF(data=linkConsum,graph_name="BLBW.jpg")
     return graph_raw,node_list,sfc_list
 
 # if __name__ == '__main__':

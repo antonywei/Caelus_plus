@@ -7,13 +7,13 @@
 BIGNUM	src/basic/globalvar.py	/^BIGNUM = 100000$/;"	v
 BwRange	src/basic/globalvar.py	/^BwRange = (10,15)$/;"	v
 CONNECT_SATE	data/process_data/cal_distance_matrix.py	/^CONNECT_SATE=2 ## except the neighbor $/;"	v
-CpuRange	src/basic/globalvar.py	/^CpuRange = (1,10)$/;"	v
-EM_embeding	src/EM.py	/^def EM_embeding(phyData):$/;"	f
-EM_filter_alg	src/EMfilter.py	/^def EM_filter_alg(): $/;"	f
-EM_find_least_cost_path	src/EMfilter.py	/^def EM_find_least_cost_path(src,dst,EM_graph):$/;"	f
-EM_pruning	src/EMfilter.py	/^def EM_pruning(EM_graph,sfc_instance):$/;"	f
+CpuRange	src/basic/globalvar.py	/^CpuRange = (5,15)$/;"	v
+DM	src/DMpre.py	/^class DM(object):$/;"	c
+EM	src/DMpre.py	/^    def EM(self,sfc_list):$/;"	m	class:DM
+EM_embeding	src/EM.py	/^def EM_embeding(phyData,sfc_list):$/;"	f
 Find_Links	src/basic/SFC.py	/^    def Find_Links(self,phy_link_id):$/;"	m	class:SFC
-LengthRange	src/basic/globalvar.py	/^LengthRange = (4,10) ## VNF numbers range$/;"	v
+LengthRange	src/basic/globalvar.py	/^LengthRange = (4,7) ## VNF numbers range$/;"	v
+Linkfactory	src/basic/globalvar.py	/^Linkfactory = 1$/;"	v
 Mapping_Link	src/basic/SFC.py	/^    def Mapping_Link(self,logic_link_id,phy_links):$/;"	m	class:SFC
 Mapping_VNF	src/basic/SFC.py	/^    def Mapping_VNF(self,vnf_id,nodes):$/;"	m	class:SFC
 Migfactory	src/basic/globalvar.py	/^Migfactory = 1$/;"	v
@@ -21,24 +21,28 @@ Node	src/basic/Node.py	/^class Node(object):$/;"	c
 NodeInfo	src/basic/infoGraph.py	/^NodeInfo={$/;"	v
 ORBIT_SIZE	data/process_data/cal_distance_matrix.py	/^ORBIT_SIZE = 6$/;"	v
 PLANE_NUM	data/process_data/cal_distance_matrix.py	/^PLANE_NUM = 10$/;"	v
+Refactor	src/basic/globalvar.py	/^Refactor = 0.6$/;"	v
 Refactory	src/basic/globalvar.py	/^Refactory = 1$/;"	v
 SFC	src/basic/SFC.py	/^class SFC:$/;"	c
 SFC_gen	src/basic/sfcGen.py	/^           LengthRange=LengthRange,BwRange=BwRange,TdRange=TdRange,Length=0):$/;"	f
 SFCnum	src/basic/globalvar.py	/^SFCnum = 100$/;"	v
 T_max	src/basic/globalvar.py	/^T_max = 92$/;"	v
 TdRange	src/basic/globalvar.py	/^TdRange = (200,400)$/;"	v
+Tdfactory	src/basic/globalvar.py	/^Tdfactory = 1$/;"	v
+__init__	src/DMpre.py	/^    def __init__(self,phyData,Refactory,Tdfactory,Migfactory,Linkfactory,migration_gate):$/;"	m	class:DM
 __init__	src/basic/Node.py	/^    def __init__(self,node_id,connect_nodes,cpu_cap=cpuCap):$/;"	m	class:Node
 __init__	src/basic/SFC.py	/^    def __init__(self, sfc_id, src, dst, vnf_list, bw, td):$/;"	m	class:SFC
 __init__	src/basic/infoGraph.py	/^    def __init__(self,NodeInfo=NodeInfo,edgeInfo=edgeInfo):$/;"	m	class:infoGraph
 calWeighEdge	src/basic/infoGraph.py	/^    def calWeighEdge(self):$/;"	m	class:infoGraph
 calWeightNode	src/basic/infoGraph.py	/^    def calWeightNode(self):$/;"	m	class:infoGraph
-cal_EM_graph_delay	src/EMfilter.py	/^def cal_EM_graph_delay(EM_graph):$/;"	f
-cal_links_weight	src/EM.py	/^def cal_links_weight(sfc_ins,EM_graph,Refactory=Refactory,Migfactory=Migfactory):$/;"	f
-cal_node_weight	src/EM.py	/^def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory=Refactory):$/;"	f
-check_vnf	src/DMpre.py	/^def check_vnf(sfc_list_pre,disconn_Links):$/;"	f
+cal_links_weight	src/EM.py	/^def cal_links_weight(sfc_ins,EM_graph,Tdfactory,Refactory,Migfactory):$/;"	f
+cal_node_weight	src/EM.py	/^def cal_node_weight(sfc_instance,vnf_id,node_list,Refactory):$/;"	f
+check_sfc	src/DMpre.py	/^    def check_sfc(self):$/;"	m	class:DM
 compare_links	src/EMfilter.py	/^def compare_links(mapData,time_step):$/;"	f
+count_delay	src/DMpre.py	/^    def count_delay(self):$/;"	m	class:DM
 cpuCap	src/basic/globalvar.py	/^cpuCap = 100$/;"	v
-create_EM_graph	src/EMfilter.py	/^def create_EM_graph(phyData,time_step):$/;"	f
+create_EM_graph	src/EMfilter.py	/^def create_EM_graph(phyData,time_step,EM_graph_pre={}):$/;"	f
+delayCount	src/basic/SFC.py	/^    def delayCount(self,EM_graph):$/;"	m	class:SFC
 df1	data/process_data/cal_distance_matrix.py	/^                df1 = read_csv_file(orbit1,s1)$/;"	v
 df2	data/process_data/cal_distance_matrix.py	/^                df2 = read_csv_file(orbit2,s2)$/;"	v
 displayNode	src/basic/Node.py	/^    def displayNode(self):$/;"	m	class:Node
@@ -46,7 +50,9 @@ displaySFC	src/basic/SFC.py	/^    def displaySFC(self):$/;"	m	class:SFC
 distance_DIC	data/process_data/cal_distance_matrix.py	/^distance_DIC = dict()$/;"	v
 distance_M	data/process_data/cal_distance_matrix.py	/^            distance_M = {}$/;"	v
 distance_Matrix	data/process_data/cal_distance_matrix.py	/^distance_Matrix = dict()$/;"	v
-draw_CDF	src/EM.py	/^def draw_CDF(data,graph_name):$/;"	f
+dm	src/DMpre.py	/^    dm = DM(phyData=phyData,Refactory=1,Tdfactory=1,Migfactory=1,Linkfactory=1,migration_gate=1\/2) $/;"	v
+draw_CDF	src/DMpre.py	/^def draw_CDF(data,graph_name):$/;"	f
+draw_cdf	src/DMpre.py	/^    def draw_cdf(self,figureName):$/;"	m	class:DM
 edgeInfo	src/basic/infoGraph.py	/^edgeInfo={$/;"	v
 embedCost	src/basic/Node.py	/^    def embedCost(self,sfc_instance,vnf_id):$/;"	m	class:Node
 embedVNF	src/basic/Node.py	/^    def embedVNF(self,sfc_instance,vnf_id):$/;"	m	class:Node
@@ -69,20 +75,33 @@ init_nodes_list	src/EM.py	/^def init_nodes_list(EM_graph):$/;"	f
 line	data/process_data/data_conversion.py	/^            line = f.readline()$/;"	v
 line	data/process_data/data_conversion.py	/^            line = line.split()$/;"	v
 maxBW	src/basic/globalvar.py	/^maxBW = 100$/;"	v
-migrate_EM_graph	src/DMpre.py	/^def migrate_EM_graph(phyData,EM_graph_pre,time_step):$/;"	f
+migrate_EM_graph	src/DMpre.py	/^    def migrate_EM_graph(self):$/;"	m	class:DM
+migration_gate	src/basic/globalvar.py	/^migration_gate = 1\/2$/;"	v
 minDIC	data/process_data/cal_distance_matrix.py	/^            minDIC = {}$/;"	v
 minK	data/process_data/cal_distance_matrix.py	/^            minK = [-sys.maxsize]*CONNECT_SATE$/;"	v
+modify_sfc	src/DMpre.py	/^    def modify_sfc(self):$/;"	m	class:DM
 name	data/process_data/data_conversion.py	/^        name = ['time','x','y','z']$/;"	v
 neigh_map	data/process_data/cal_distance_matrix.py	/^    neigh_map = {}$/;"	v
 node_dis	data/process_data/cal_distance_matrix.py	/^                node_dis = np.sqrt(np.sum((df1-df2)**2,axis=1,keepdims=True))$/;"	v
+phyData	src/DMpre.py	/^    phyData = read_csv_file()$/;"	v
 physical_Node_list	src/basic/globalvar.py	/^physical_Node_list = [i for i in range(60)]$/;"	v
+pm	src/DMpre.py	/^    pm = DM(phyData=phyData,Refactory=100,Tdfactory=1,Migfactory=1,Linkfactory=1,migration_gate=1\/2) $/;"	v
 read_csv_file	data/process_data/cal_distance_matrix.py	/^def read_csv_file(orbit,s):$/;"	f
 read_csv_file	src/EMfilter.py	/^def read_csv_file(filename=filename):$/;"	f
+release_SFC_ins	src/DMpre.py	/^    def release_SFC_ins(self,sfc_id):$/;"	m	class:DM
+release_SFC_links	src/DMpre.py	/^    def release_SFC_links(self,sfc_id):$/;"	m	class:DM
+release_embedding_result	src/basic/Node.py	/^    def release_embedding_result(self):$/;"	m	class:Node
+release_embedding_result	src/basic/SFC.py	/^    def release_embedding_result(self):$/;"	m	class:SFC
+release_embedding_sfc	src/basic/Node.py	/^    def release_embedding_sfc(self,sfc_instance):$/;"	m	class:Node
+replacement_sfc	src/DMpre.py	/^    def replacement_sfc(self,sfc_id,sfc_node_map_pre,sfc_link_map_pre):$/;"	m	class:DM
+reroute_sfc	src/DMpre.py	/^    def reroute_sfc(self,sfc_id):$/;"	m	class:DM
 res	data/process_data/data_conversion.py	/^        res=np.array(result)$/;"	v
 result	data/process_data/data_conversion.py	/^        result = []$/;"	v
 sameOrbitNode1	data/process_data/cal_distance_matrix.py	/^            sameOrbitNode1 = (s1 + 9)%10$/;"	v
 sameOrbitNode2	data/process_data/cal_distance_matrix.py	/^            sameOrbitNode2 = (s1 + 1)%10$/;"	v
 sfcCount	src/basic/SFC.py	/^    sfcCount = 0$/;"	v	class:SFC
+sfc_list	src/DMpre.py	/^    sfc_list = gen_SFC_list()$/;"	v
+sfc_list2	src/DMpre.py	/^    sfc_list2 = copy.deepcopy(sfc_list)$/;"	v
 tempS	data/process_data/data_conversion.py	/^            tempS = str(0)+str(s)$/;"	v
 tempS	data/process_data/data_conversion.py	/^            tempS = str(10)$/;"	v
 time_len	data/process_data/cal_distance_matrix.py	/^time_len = len(distance_Matrix['00']['00'])$/;"	v

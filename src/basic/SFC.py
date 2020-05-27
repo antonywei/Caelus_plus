@@ -15,10 +15,8 @@ class SFC:
         SFC.sfcCount += 1
         self.nodesMap = {i:None for i in range(1,(self.VNFnum)+1)}
         self.linkMap = {i:[] for i in range((self.VNFnum)+1)}
-        self.linkMap[0].append(src)
-        self.linkMap[self.VNFnum].append(dst)
         #self.embed_delay
-
+        self.delay = 0
 
     def displaySFC(self):
         print("******* the info of SFC request "+str(self.id)+" is ************")
@@ -44,6 +42,14 @@ class SFC:
     def release_embedding_result(self):
         self.nodesMap = {i:None for i in range(1,(self.VNFnum)+1)}
         self.linkMap = {i:[] for i in range((self.VNFnum)+1)}
+
+    def delayCount(self,EM_graph):
+        self.delay=0
+        for vnf in self.linkMap:
+            for link in self.linkMap[vnf]:
+                self.delay+=EM_graph[link[0]][link[1]][0]
+                self.delay+=10
+
 
 
 

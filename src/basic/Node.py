@@ -41,6 +41,14 @@ class Node(object):
                 return BIGNUM
         else:
             return BIGNUM
+    def release_embedding_sfc(self,sfc_instance):
+        cpu_reduce = 0
+        sfc_id = sfc_instance.id
+        release_vnf_list = self.embedSfc.pop(sfc_id)
+        for vnf in release_vnf_list:
+            cpu_reduce=cpu_reduce+sfc_instance.vnfList[vnf][1]/self.cpuCap
+        self.cpuRe+=cpu_reduce
+        self.sfcList.remove(sfc_instance)
     def release_embedding_result(self):
         self.cpuCap = cpuCap
         #self.embedVNF = {}

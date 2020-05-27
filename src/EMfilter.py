@@ -49,16 +49,6 @@ def create_EM_graph(phyData,time_step,EM_graph_pre={}):
 #             EM_graph[i][j][0] = round(EM_graph[i][j][0]/(3*10**5))
 #     return EM_graph
 
-def EM_pruning(EM_graph,sfc_instance):
-    pass
-
-
-def EM_find_least_cost_path(src,dst,EM_graph):
-    pass
-
-
-def EM_filter_alg(): 
-    pass
     ### init EM graph  with delay the connection info {node_id:{node_id_conn:[td,conn]}}
 
     ### init node_list according to EM graph
