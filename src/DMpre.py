@@ -3,8 +3,8 @@ from basic.globalvar import *
 class DM(object):
     def __init__(self,phyData,Refactory,Tdfactory,Migfactory,Linkfactory,migration_gate):
         self.reroute_links={} ## {time step:{sfc_id:{logic_link_id:[new links]},{}}
-        self.reroute_links_count=0
-        self.replacement_vnf_count=0
+        self.reroute_links_count=[0 for i in range(8)]
+        self.replacement_vnf_count=[0 for i in range(8)]
         self.migration_SFC={} ## {time step:{sfc_id:{vnf_id},{}}
         self.phyData=phyData
         self.EM_graph={}
@@ -20,9 +20,9 @@ class DM(object):
         self.migration_gate = migration_gate
         Refactor = 0.6
         self.sfc_need_mig={}
-    def resetCount(self):
-        self.reroute_links_count=0
-        self.replacement_vnf_count=0
+    # def resetCount(self):
+    #     self.reroute_links_count=0
+    #     self.replacement_vnf_count=0
 
     def EM(self,sfc_list):
         self.EM_graph[0],self.node_list_status,self.sfc_list_status=EM_embeding(phyData=phyData,\
@@ -34,8 +34,8 @@ class DM(object):
             sfc_list=sfc_list,Tdfactory=self.Tdfactory,Refactory=self.Refactory,Migfactory=self.Migfactory)
         self.time_step=1
 
-    def EM_RD(self,sfc_list):
-        self.EM_graph[0],self.node_list_status,self.sfc_list_status=EM_embeding_RD(phyData=phyData,\
+    def EM_SNH(self,sfc_list):
+        self.EM_graph[0],self.node_list_status,self.sfc_list_status=EM_embeding_SNH(phyData=phyData,\
             sfc_list=sfc_list,Tdfactory=self.Tdfactory,Refactory=self.Refactory,Migfactory=self.Migfactory)
         self.time_step=1
 
@@ -101,7 +101,6 @@ class DM(object):
                 ### release old links only in EM_graph not in SFC_LIST
                 self.release_SFC_links(sfc_id=sfc_id)
                 self.reroute_links[self.time_step][sfc_id] = self.reroute_sfc(sfc_id)
-                self.reroute_links_count+=1
             ### reroute sfc
             else:
                 print("SFC need migration")
@@ -161,7 +160,7 @@ class DM(object):
             logic_link_reroute[logic_link] = embed_links
             sfc_ins.Mapping_Link(logic_link_id=logic_link,phy_links=embed_links)
             update_link_status(sfc_ins,embed_links,self.EM_graph[self.time_step])
-            self.reroute_links_count+=1
+            self.reroute_links_count[self.sfc_list_status[sfc_id].VNFnum]+=1
         return logic_link_reroute
     #def release_links(self,EM_graph,reroute_links):
 
@@ -220,7 +219,7 @@ class DM(object):
             ## Node to place VNF 
             node_index = embed_node
             if node_index != sfc_node_map_pre[vnf]:
-                self.replacement_vnf_count+=1
+                self.replacement_vnf_count[self.sfc_list_status[sfc_id].VNFnum]+=1
             embed_links = []
             if node_index == sfc_src:
                 embed_links.insert(0,(preNode_src[node_index],node_index))
@@ -234,7 +233,7 @@ class DM(object):
                 update_link_status(sfc_ins,embed_links,self.EM_graph[self.time_step])
             
             if embed_links != sfc_link_map_pre[vnf-1]:
-                self.reroute_links_count+=1
+                self.reroute_links_count[self.sfc_list_status[sfc_id].VNFnum]+=1
             
 
             if vnf == sfc_ins.VNFnum:
@@ -250,7 +249,9 @@ class DM(object):
                     sfc_ins.Mapping_Link(logic_link_id=vnf,phy_links=embed_dst_links)
                     update_link_status(sfc_ins,embed_dst_links,self.EM_graph[self.time_step])
                 if embed_dst_links != sfc_link_map_pre[vnf]:
-                    self.reroute_links_count+=1
+                    self.reroute_links_count[self.sfc_list_status[sfc_id].VNFnum]+=1
+
+
              ## input EM graph
             ## cal weight of links 
             ## cal weight of Nodes
@@ -282,13 +283,13 @@ class DM(object):
             for node2 in self.EM_graph[self.time_step-1][node1]:
                 linkBwRe.append(self.EM_graph[self.time_step-1][node1][node2][2])
         linkBwRe = np.array(linkBwRe)
-        linkConsum=1-linkBwRe/100
+        linkConsum=1-linkBwRe/200
 
         Delay = []
         for sfc_ins in self.sfc_list_status:
             sfc_ins.delayCount(self.EM_graph[self.time_step-1])
-            Delay.append(sfc_ins.delay)
-
+            Delay.append(sfc_ins.delay/(sfc_ins.VNFnum+1))
+        Delay=np.array(Delay)
         draw_CDF(data=CPUconsum,graph_name="fig/"+figureName+"CPU"+".jpg")
         draw_CDF(data=linkConsum,graph_name="fig/"+figureName+"BW"+".jpg")
         draw_CDF(data=Delay,graph_name="fig/"+figureName+"Delay"+".jpg")
@@ -345,44 +346,71 @@ def draw_CDF(data,graph_name):
                   'size'   : 16.5} 
     
     plt.savefig(graph_name)
+    plt.close()
     #plt.show()
-
+def count_cpu_overflow(CPUconsum):
+    count = 0
+    for i in range(len(CPUconsum)):
+        if i > 90:
+            count+=1
+    return count 
 
 if __name__ == '__main__':
     phyData = read_csv_file()
     sfc_list = gen_SFC_list()
     sfc_list2 = copy.deepcopy(sfc_list)
     sfc_list3=copy.deepcopy(sfc_list)
+    sfc_list4=copy.deepcopy(sfc_list)
+
+    sfc_len_count=[0 for i in range(8)]
+    for sfc in sfc_list:
+        sfc_len_count[sfc.VNFnum]+=1
+
     ## get previous topo info
-    caelus = DM(phyData=phyData,Refactory=1,Tdfactory=1,Migfactory=1,Linkfactory=1,migration_gate=1/2) 
+    caelus = DM(phyData=phyData,Refactory=1,Tdfactory=1,Migfactory=1,Linkfactory=1,migration_gate=2) 
     caelus.EM(sfc_list)
     caelusCPUconsum,caeluslinkConsum,caelusDelay=caelus.draw_cdf(figureName="caelus-EM")
+    caelusCPUover = count_cpu_overflow(caelusCPUconsum)
     for i in range(90):
         caelus.migrate_EM_graph()
         caelus.check_sfc()
         caelus.modify_sfc()
     caelus.draw_cdf(figureName="caelus-DM")
-
+    caelusLinkRe =  np.array(caelus.reroute_links_count[2:7]) / np.array(sfc_len_count[2:7])
 
     ## get previous topo info
-    MMT = DM(phyData=phyData,Refactory=0.1,Tdfactory=1,Migfactory=10,Linkfactory=1,migration_gate=1/2) 
+    MMT = DM(phyData=phyData,Refactory=0.1,Tdfactory=1,Migfactory=10,Linkfactory=1,migration_gate=2) 
     MMT.EM(sfc_list2)
     MMTCPUconsum,MMTlinkConsum,MMTDelay=MMT.draw_cdf(figureName="MMT-EM")
+    MMTCPUover = count_cpu_overflow(MMTCPUconsum)
     for i in range(90):
         MMT.migrate_EM_graph()
         MMT.check_sfc()
         MMT.modify_sfc()
     MMT.draw_cdf(figureName="RO-DM")
+    MMTLinkRe =  np.array(MMT.reroute_links_count[2:7]) / np.array(sfc_len_count[2:7])
 
-    GLL = DM(phyData=phyData,Refactory=3,Tdfactory=5,Migfactory=1,Linkfactory=1,migration_gate=1/2) 
-    GLL.EM(sfc_list3)
+    GLL = DM(phyData=phyData,Refactory=5,Tdfactory=5,Migfactory=1,Linkfactory=1,migration_gate=2) 
+    GLL.EM_GLL(sfc_list3)
     GLLCPUconsum,GLLlinkConsum,GLLDelay=GLL.draw_cdf(figureName="GLL-EM")
+    GLLCPUover = count_cpu_overflow(GLLCPUconsum)
     for i in range(90):
         GLL.migrate_EM_graph()
         GLL.check_sfc()
         GLL.modify_sfc()
     GLL.draw_cdf(figureName="GLL-DM")
+    GLLLinkRe =  np.array(GLL.reroute_links_count[2:7]) / np.array(sfc_len_count[2:7])
 
+    SNH = DM(phyData=phyData,Refactory=1,Tdfactory=1,Migfactory=1,Linkfactory=1,migration_gate=2) 
+    SNH.EM_SNH(sfc_list4)
+    SNHCPUconsum,SNHlinkConsum,SNHDelay=SNH.draw_cdf(figureName="SNH-EM")
+    SNHCPUover = count_cpu_overflow(SNHCPUconsum)
+    for i in range(90):
+        SNH.migrate_EM_graph()
+        SNH.check_sfc()
+        SNH.modify_sfc()
+    SNH.draw_cdf(figureName="SNH-DM")
+    SNHLinkRe =  np.array(SNH.reroute_links_count[2:7]) / np.array(sfc_len_count[2:7])
 
     #graph_raw,node_list_pre,sfc_list = EM_embeding(phyData=phyData)
     ## generate new topo
