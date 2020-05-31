@@ -19,7 +19,7 @@ def SFC_gen(SFC_id,physical_Node_list=physical_Node_list,CpuRange=CpuRange,\
         VNFnum = random.randint(LengthRange[0],LengthRange[1])
     else:
         VNFnum=Length
-    VNF_list={i:(i,CpuRange[random.randint(0,len(CpuRange)-1)]) for i in range(1,VNFnum)}
+    VNF_list={i:(i,random.choice(CpuRange)) for i in range(1,VNFnum)}
     Bw = random.randint(BwRange[0],BwRange[1])
     Td = random.randint(TdRange[0],TdRange[1])
     newSFC = SFC(sfc_id=SFC_id, src=src, dst=dst, vnf_list=VNF_list, bw=Bw, td=Td)
